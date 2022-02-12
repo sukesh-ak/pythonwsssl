@@ -11,7 +11,9 @@ HOST = '192.168.1.100'
 PORT = 4443
 Handler = http.server.SimpleHTTPRequestHandler
 with http.server.HTTPServer((HOST, PORT), Handler) as httpd:
-    print("Web Server at => " + HOST + ":" + str(PORT))
-    httpd.socket = ssl.wrap_socket(httpd.socket, keyfile="ca_key.pem", certfile="ca_cert.pem", server_side=True)
+    print("Web Server listening at => " + HOST + ":" + str(PORT))
+    sslcontext = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    sslcontext.load_cert_chain(keyfile="ca_key.pem", certfile="ca_cert.pem")
+    httpd.socket = sslcontext.wrap_socket(httpd.socket, server_side=True)
     httpd.serve_forever()
     
